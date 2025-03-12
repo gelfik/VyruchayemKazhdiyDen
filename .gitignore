@@ -60,6 +60,7 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
 
 # Flask stuff:
 instance/
@@ -128,6 +129,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+*.project
 .env
 .venv
 env/
@@ -172,3 +174,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# don't forget to sync this file with .dockerignore
+/smedia/
+static
+media
+smedia
