@@ -1,0 +1,26 @@
+dist
+build
+tmp
+*.egg-info
+*.pyc
+__pycache__
+.coverage
+.tox
+.cache
+.pytest_cache
+.python-version
+
+*.sqlite3
+
+*.project
+.idea
+/.venv
+venv
+
+static
+media
+smedia
+.env
+
+# don't forget to sync this file with .dockerignore
+/smedia/

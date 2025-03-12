@@ -1,0 +1,9 @@
+{% extends 'admin/change_list.html' %}
+{% block object-tools %}
+    <div style="display: flex; border-bottom: black 1px solid; margin-bottom: 10px; padding-bottom: 30px">
+        <span style="margin-right: 30px">
+            <h3>Общая сумма пожертвований: {{ total_amount }} р.</h3>
+        </span>
+    </div>
+    {{ block.super }}
+{% endblock %}
