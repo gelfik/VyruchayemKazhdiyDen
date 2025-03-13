@@ -36,7 +36,6 @@ class PublicPromoDonationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet)
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        donations_data = self.get_serializer(queryset[:4], many=True).data
         aggregated_sum = queryset.aggregate(total_amount=Sum("amount")).get("total_amount", 0)
-        response_data = {"donations": donations_data, "total_amount": aggregated_sum}
+        response_data = aggregated_sum if aggregated_sum else 0
         return Response(data=response_data, status=status.HTTP_200_OK)

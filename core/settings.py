@@ -21,12 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ast.literal_eval(os.getenv("DEBUG", "False"))
-TILDA_WEBHOOK_API_KEY = ''
+SECRET_KEY = os.getenv("SECRET_KEY", "")
+
+TILDA_WEBHOOK_API_KEY = os.getenv("TILDA_WEBHOOK_API_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-print(os.getenv("DEBUG", "False"), 'esvesv')
-print(ast.literal_eval(os.getenv("DEBUG", "False")))
 DEBUG = ast.literal_eval(os.getenv("DEBUG", "False"))
 
 ALLOWED_HOSTS = ast.literal_eval(os.getenv("ALLOWED_HOSTS", '["*"]'))
@@ -40,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'donation',
     'rest_framework',
+    'donation',
 ]
 
 MIDDLEWARE = [
