@@ -180,3 +180,5 @@ cython_debug/
 static
 media
 smedia
+
+certbot
