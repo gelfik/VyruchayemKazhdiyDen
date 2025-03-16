@@ -17,7 +17,8 @@ echo "Waiting for nginx to start..."
 sleep 10
 
 # Запрашиваем сертификат в режиме staging (тестовый режим)
-docker-compose -f docker-compose.prod.yml run --rm certbot certbot certonly \
+docker-compose -f docker-compose.prod.yml run --rm certbot \
+    certonly \
     --webroot \
     --webroot-path /var/www/certbot \
     --email $email \
@@ -28,7 +29,8 @@ docker-compose -f docker-compose.prod.yml run --rm certbot certbot certonly \
 
 # Если тестовый сертификат получен успешно, запрашиваем боевой
 echo "Requesting production certificate..."
-docker-compose -f docker-compose.prod.yml run --rm certbot certbot certonly \
+docker-compose -f docker-compose.prod.yml run --rm certbot \
+    certonly \
     --webroot \
     --webroot-path /var/www/certbot \
     --email $email \
