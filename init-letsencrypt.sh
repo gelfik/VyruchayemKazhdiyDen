@@ -1,44 +1,74 @@
 #!/bin/bash
 
+# Конфигурация
 domain="api.xn--80aafkpbcdcb3agfghez2axe1c.xn--p1ai"
-email="your-email@example.com"  # Замените на свой email
+email="your-email@example.com"    # Замените на свой email
+staging=1                         # Установите в 0 для боевого сертификата
+rsa_key_size=4096
 
-# Остановим контейнеры если они запущены
-docker-compose -f docker-compose.prod.yml down
+# Проверка root прав
+if [ "$EUID" -ne 0 ]; then 
+    echo "Запустите скрипт с правами root"
+    exit 1
+fi
 
 # Создаем необходимые директории
-mkdir -p certbot/conf certbot/www
+echo "Создаем директории для certbot..."
+mkdir -p certbot/conf/live/$domain
+mkdir -p certbot/www
 
-# Запускаем только nginx
+# Создаем временный самоподписанный сертификат
+echo "Создаем временный сертификат..."
+openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1 \
+    -keyout certbot/conf/live/$domain/privkey.pem \
+    -out certbot/conf/live/$domain/fullchain.pem \
+    -subj '/CN=localhost'
+
+# Остановка существующих контейнеров
+echo "Останавливаем контейнеры..."
+docker-compose -f docker-compose.prod.yml down
+
+echo "Запускаем nginx..."
 docker-compose -f docker-compose.prod.yml up -d nginx
+echo "Ждем запуск nginx..."
+sleep 5
 
-# Ждем запуска nginx
-echo "Waiting for nginx to start..."
-sleep 10
+# Удаляем временный сертификат
+echo "Удаляем временный сертификат..."
+rm -rf certbot/conf/live/$domain/*
 
-echo "Requesting staging certificate..."
+# Запрашиваем сертификат
+echo "Запрашиваем сертификат Let's Encrypt..."
+if [ $staging != "0" ]; then
+    staging_arg="--staging"
+else
+    staging_arg=""
+fi
+
+# Проверяем доступность домена
+echo "Проверяем доступность домена..."
+curl -I http://$domain
+
+echo "Запускаем certbot..."
 docker-compose -f docker-compose.prod.yml run --rm --entrypoint "\
-  certbot certonly --webroot -w /var/www/certbot \
-    --staging \
+    certbot certonly --webroot \
+    -w /var/www/certbot \
+    $staging_arg \
     --email $email \
-    --rsa-key-size 4096 \
+    -d $domain \
+    --rsa-key-size $rsa_key_size \
     --agree-tos \
-    --no-eff-email \
     --force-renewal \
-    -d $domain" certbot
+    --no-eff-email" certbot
 
-echo "Requesting production certificate..."
-docker-compose -f docker-compose.prod.yml run --rm --entrypoint "\
-  certbot certonly --webroot -w /var/www/certbot \
-    --email $email \
-    --rsa-key-size 4096 \
-    --agree-tos \
-    --no-eff-email \
-    --force-renewal \
-    -d $domain" certbot
+# Перезапускаем все сервисы
+echo "Перезапускаем все сервисы..."
+docker-compose -f docker-compose.prod.yml down
+docker-compose -f docker-compose.prod.yml up -d
 
-echo "Stopping nginx..."
-docker-compose -f docker-compose.prod.yml stop nginx
+echo "Проверяем статус сертификата..."
+docker-compose -f docker-compose.prod.yml exec nginx nginx -t
 
-echo "Starting all services..."
-docker-compose -f docker-compose.prod.yml up -d 
+echo "Готово! Проверьте работу сайта по адресу https://$domain"
+echo "Если вы использовали staging=1, то браузер покажет предупреждение о сертификате"
+echo "Для получения боевого сертификата установите staging=0 и запустите скрипт снова" 
