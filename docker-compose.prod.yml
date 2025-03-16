@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     volumes:
-      - static_volume:/app/staticfiles
+      - static_volume:/app/static
       - media_volume:/app/media
     expose:
       - "8000"
@@ -39,7 +39,7 @@ services:
   nginx:
     image: nginx:1.25
     volumes:
-      - static_volume:/app/staticfiles
+      - static_volume:/app/static
       - media_volume:/app/media
       - ./nginx:/etc/nginx/conf.d
       - ./certbot/www:/var/www/certbot
