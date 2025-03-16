@@ -9,8 +9,8 @@ class NewPromoDonationPaymentSerializer(serializers.Serializer):
 
 
 class NewPromoDonationWebhookSerializer(serializers.Serializer):
-    name = serializers.CharField(required=True, allow_blank=False)
-    email = serializers.EmailField(required=True, allow_blank=False)
+    Name = serializers.CharField(required=True, allow_blank=False)
+    Email = serializers.EmailField(required=True, allow_blank=False)
     payment = NewPromoDonationPaymentSerializer(required=True)
 
     @property
@@ -19,6 +19,8 @@ class NewPromoDonationWebhookSerializer(serializers.Serializer):
         payment_data = data.pop("payment")
         data["order_id"] = payment_data["orderid"]
         data["amount"] = payment_data["amount"]
+        data["name"] = data.pop("Name")
+        data["email"] = data.pop("Email")
         return data
 
 

@@ -1,3 +1,5 @@
+import logging
+
 from django.db.models import Sum
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -37,5 +39,4 @@ class PublicPromoDonationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet)
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         aggregated_sum = queryset.aggregate(total_amount=Sum("amount")).get("total_amount", 0)
-        response_data = aggregated_sum if aggregated_sum else 0
-        return Response(data=response_data, status=status.HTTP_200_OK)
+        return Response(data={'total_amount': aggregated_sum if aggregated_sum else 0}, status=status.HTTP_200_OK)
