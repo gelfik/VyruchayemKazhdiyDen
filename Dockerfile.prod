@@ -32,8 +32,12 @@ RUN pip install --no-cache /wheels/*
 # Копирование проекта
 COPY . .
 
-# Создание непривилегированного пользователя
-RUN useradd -m appuser && chown -R appuser:appuser /app
+# Создание директорий и установка прав
+RUN mkdir -p /app/static /app/media \
+    && useradd -m appuser \
+    && chown -R appuser:appuser /app
+
+# Переключение на непривилегированного пользователя
 USER appuser
 
 EXPOSE 8000
