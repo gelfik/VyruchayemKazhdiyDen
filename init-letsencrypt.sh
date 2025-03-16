@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Конфигурация
-domain="api.xn--80aafkpbcdcb3agfghez2axe1c.xn--p1ai"
+domain="api.выручаемкаждыйдень.рф"
 email="your-email@example.com"    # Замените на свой email
 staging=1                         # Установите в 0 для боевого сертификата
 rsa_key_size=4096
