@@ -9,35 +9,36 @@ docker-compose -f docker-compose.prod.yml down
 # Создаем необходимые директории
 mkdir -p certbot/conf certbot/www
 
-# Запускаем nginx
+# Запускаем только nginx
 docker-compose -f docker-compose.prod.yml up -d nginx
 
 # Ждем запуска nginx
 echo "Waiting for nginx to start..."
 sleep 10
 
-# Запрашиваем сертификат в режиме staging (тестовый режим)
-docker-compose -f docker-compose.prod.yml run --rm certbot \
-    certonly \
-    --webroot \
-    --webroot-path /var/www/certbot \
-    --email $email \
-    --agree-tos \
-    --no-eff-email \
+echo "Requesting staging certificate..."
+docker-compose -f docker-compose.prod.yml run --rm --entrypoint "\
+  certbot certonly --webroot -w /var/www/certbot \
     --staging \
-    -d $domain
-
-# Если тестовый сертификат получен успешно, запрашиваем боевой
-echo "Requesting production certificate..."
-docker-compose -f docker-compose.prod.yml run --rm certbot \
-    certonly \
-    --webroot \
-    --webroot-path /var/www/certbot \
     --email $email \
+    --rsa-key-size 4096 \
     --agree-tos \
     --no-eff-email \
     --force-renewal \
-    -d $domain
+    -d $domain" certbot
 
-# Перезапускаем nginx для применения сертификата
-docker-compose -f docker-compose.prod.yml restart nginx 
+echo "Requesting production certificate..."
+docker-compose -f docker-compose.prod.yml run --rm --entrypoint "\
+  certbot certonly --webroot -w /var/www/certbot \
+    --email $email \
+    --rsa-key-size 4096 \
+    --agree-tos \
+    --no-eff-email \
+    --force-renewal \
+    -d $domain" certbot
+
+echo "Stopping nginx..."
+docker-compose -f docker-compose.prod.yml stop nginx
+
+echo "Starting all services..."
+docker-compose -f docker-compose.prod.yml up -d 
