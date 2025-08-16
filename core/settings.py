@@ -31,10 +31,7 @@ DEBUG = ast.literal_eval(os.getenv("DEBUG", "False"))
 ALLOWED_HOSTS = ast.literal_eval(os.getenv("ALLOWED_HOSTS", '["*"]'))
 
 # Настройки безопасности
-CSRF_TRUSTED_ORIGINS = [
-    'https://api.выручаемкаждыйдень.рф',
-    'https://api.xn--80aaekaddf2agvt2a6b8c3ckw.xn--p1ai'
-]
+CSRF_TRUSTED_ORIGINS = ast.literal_eval(os.getenv("CSRF_TRUSTED_ORIGINS", '["*"]'))
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
