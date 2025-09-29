@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Конфигурация
-domain="api.xn--90aahfa2cdbrfho3oc.xn--p1ai"
+domain="api.xn--80aaekaddf2agvt2a6b8c3ckw.xn--p1ai"
 email="your-email@example.com"    # Замените на свой email
 rsa_key_size=4096
 
