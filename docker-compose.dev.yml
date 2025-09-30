@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python -Wd -b manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
       - static_volume:/app/static

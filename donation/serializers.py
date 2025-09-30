@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from donation.models import PromoDonation
+from donation.models import PromoDonation, PromoAction
 
 
 class NewPromoDonationPaymentSerializer(serializers.Serializer):
@@ -22,6 +22,12 @@ class NewPromoDonationWebhookSerializer(serializers.Serializer):
         data["name"] = data.pop("Name")
         data["email"] = data.pop("Email")
         return data
+
+
+class PromoActionQuerySerializer(serializers.Serializer):
+    promo_action = serializers.PrimaryKeyRelatedField(
+        queryset=PromoAction.objects.all(), required=True
+    )
 
 
 class PublicPromoDonationSerializer(serializers.ModelSerializer):
