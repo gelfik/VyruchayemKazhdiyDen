@@ -28,7 +28,9 @@ class PromoDonation(CreatedUpdatedMixin):
         verbose_name="Акция",
         related_name="donations",
         on_delete=models.CASCADE,
-        default=None
+        default=None,
+        null=True,
+        blank=False,
     )
 
     class Meta:

@@ -13,6 +13,12 @@ def create_first_promo_action(apps, schema_editor):
         name='Выручаем каждый день 30.09.2025',
         created=datetime(2025, 9, 30, 0, 0, 1),
     )
+
+
+def set_first_promo_action(apps, schema_editor):
+    PromoAction = apps.get_model('donation', 'PromoAction')
+    PromoDonation = apps.get_model('donation', 'PromoDonation')
+    promo_action = PromoAction.objects.first()
     PromoDonation.objects.all().update(promo_action=promo_action)
 
 
@@ -41,10 +47,11 @@ class Migration(migrations.Migration):
             name='order_id',
             field=models.IntegerField(verbose_name='ID заказа'),
         ),
+        migrations.RunPython(create_first_promo_action, migrations.RunPython.noop),
         migrations.AddField(
             model_name='promodonation',
             name='promo_action',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='donations',
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='donations',
                                     to='donation.promoaction', verbose_name='Акция'),
         ),
         migrations.AddConstraint(
@@ -52,5 +59,5 @@ class Migration(migrations.Migration):
             constraint=models.UniqueConstraint(fields=('promo_action', 'order_id'),
                                                name='unique_order_per_promo_action'),
         ),
-        migrations.RunPython(create_first_promo_action, migrations.RunPython.noop),
+        migrations.RunPython(set_first_promo_action, migrations.RunPython.noop),
     ]
